@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct ContentView: View {
+
+   @ObservedObject private var viewModel = ContentViewModel()
+
+   init() {
+   }
    
    var body: some View {
       VStack(alignment: .center, spacing: 0, content: {
          Spacer()
          HStack(alignment: .center, spacing: 0, content: {
-            ForEach((1 ... 8).reversed(), id: \.self, content: { row in
+            ForEach(0 ... 7, id: \.self, content: { x in
                VStack(alignment: .center, spacing: 0, content: {
-                  ForEach((1 ... 8).reversed(), id: \.self, content: { line in
-                     let white = (row + line) % 2 == 0
-                     if white {
-                        SwiftUI.Color.yellow
-                     } else {
-                        SwiftUI.Color.black
-                     }
+                  ForEach(0 ... 7, id: \.self, content: { y in
+                     let position = Position(x: x, y: y)
+                     squareView(position: position)
                   })
                })
             })
@@ -30,6 +31,40 @@ struct ContentView: View {
          Spacer()
       })
       .background(SwiftUI.Color.cyan)
+   }
+
+   @ViewBuilder
+   func squareView(position: Position) -> some View {
+      let background: SwiftUI.Color = {
+         if viewModel.selected == position {
+            return SwiftUI.Color.green
+         } else {
+            let white = (position.x + position.y) % 2 == 0
+            return white ? SwiftUI.Color.yellow : SwiftUI.Color.brown
+         }
+      }()
+      ZStack(alignment: .center) {
+         background
+         pieceView(position: position)
+      }.onTapGesture(count: 1) { [weak viewModel] in
+         viewModel?.select(position: position)
+      }
+   }
+
+   @ViewBuilder
+   func pieceView(position: Position) -> some View {
+      if let piece = viewModel.game.board.piece(at: position) {
+         VStack(alignment: .center, spacing: 0) {
+            Spacer()
+            SwiftUI.Image(piece.type.rawValue)
+               .resizable()
+               .foregroundColor(piece.color == .white ? .white : .black)
+               .scaledToFit()
+            Spacer()
+         }
+      } else {
+         Spacer()
+      }
    }
 }
 
