@@ -42,3 +42,20 @@ struct BoardView: View {
          }
    }
 }
+
+struct BoardView_Previews: PreviewProvider {
+
+   @Namespace
+   static var namespace
+
+   static var previews: some View {
+      ZStack {
+         SwiftUI.Color.cyan
+         BoardView(select: { _ in })
+            .background(.orange)
+            .frame(width: 175, height: 225)
+      }
+      .previewLayout(.fixed(width: 250, height: 250))
+      .foregroundColor(.cyan)
+   }
+}

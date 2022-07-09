@@ -33,6 +33,7 @@ struct PiecesView: View {
                .frame(width: side, height: side)
          })
       }
+      .aspectRatio(1, contentMode: .fit)
       .allowsHitTesting(false)
    }
 }
@@ -73,9 +74,9 @@ struct PiecesView_Previews: PreviewProvider {
             ]
          )
          .background(.orange)
+         .frame(width: 200, height: 225)
       }
       .previewLayout(.fixed(width: 250, height: 250))
-      .frame(width: 175, height: 225)
       .foregroundColor(.cyan)
    }
 }
