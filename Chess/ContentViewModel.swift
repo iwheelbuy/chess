@@ -10,18 +10,40 @@ import SwiftUI
 @MainActor
 final class ContentViewModel: ObservableObject {
 
+   private var game: Game
    @Published
-   var selected: Position? = .init(x: 0, y: 0)
+   private(set) var pieces: [Position: Piece] = [:]
+   @Published
+   private(set) var piecesTaken: [Position: Piece] = [:]
+   @Published
+   var selected: Position?
 
-   var game: Game = .init(
-      board: .init(),
-      history: []
-   )
+   init() {
+      game = .init(
+         board: .init(),
+         history: []
+      )
+      pieces = getPieces()
+   }
 
    func select(position: Position) {
+      let piecesPrevious = pieces
+      defer {
+//         print("~~|", self.selected)
+      }
       if let selected = self.selected {
          if game.canMove(from: selected, to: position) {
             game.move(from: selected, to: position)
+            pieces = getPieces()
+            print("~~|", piecesTaken)
+            piecesTaken = piecesPrevious
+               .filter({ _, piece in
+                  pieces.contains(where: { $0.value.id == piece.id }) == false
+               })
+               .reduce(into: piecesTaken, { pieces, object in
+                  pieces[object.key] = object.value
+               })
+            print("~~|", piecesTaken)
          }
          self.selected = nil
       } else if game.board.piece(at: position) != nil {
@@ -29,5 +51,13 @@ final class ContentViewModel: ObservableObject {
       } else {
          self.selected = nil
       }
+   }
+
+   func getPieces() -> [Position: Piece] {
+      return game.board
+         .allPositions
+         .reduce(into: [Position: Piece]()) { dictionary, position in
+            dictionary[position] = game.board.piece(at: position)
+         }
    }
 }

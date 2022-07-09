@@ -397,13 +397,19 @@ enum Color: String {
    }
 }
 
-struct Piece: Equatable, ExpressibleByStringLiteral {
-   let id: String
-   var type: PieceType
+struct Piece: Equatable, ExpressibleByStringLiteral, Identifiable {
+
    let color: Color
+   let id: UUID
+   var type: PieceType
+
+   init(color: Color, id: UUID = .init(), type: PieceType) {
+      self.color = color
+      self.id = id
+      self.type = type
+   }
 
    init(stringLiteral: String) {
-      id = stringLiteral
       let chars = Array(stringLiteral)
       precondition(chars.count == 3)
       switch chars[0] {
@@ -422,6 +428,7 @@ struct Piece: Equatable, ExpressibleByStringLiteral {
       default:
          preconditionFailure()
       }
+      id = .init()
    }
 }
 

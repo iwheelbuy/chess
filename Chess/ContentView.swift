@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
 
    @ObservedObject private var viewModel = ContentViewModel()
+   @Namespace private var current
+   @Namespace private var taken
 
    init() {
    }
@@ -17,54 +19,22 @@ struct ContentView: View {
    var body: some View {
       VStack(alignment: .center, spacing: 0, content: {
          Spacer()
-         HStack(alignment: .center, spacing: 0, content: {
-            ForEach(0 ... 7, id: \.self, content: { x in
-               VStack(alignment: .center, spacing: 0, content: {
-                  ForEach(0 ... 7, id: \.self, content: { y in
-                     let position = Position(x: x, y: y)
-                     squareView(position: position)
-                  })
-               })
-            })
-         })
-         .aspectRatio(1, contentMode: .fit)
+         ZStack(alignment: .center) {
+            BoardView(selected: viewModel.selected) { [weak viewModel] position in
+               withAnimation(SwiftUI.Animation.linear(duration: 2)) {
+                  viewModel?.select(position: position)
+               }
+            }
+            PiecesView(
+               current: current,
+               taken: taken,
+               pieces: viewModel.pieces,
+               piecesTaken: viewModel.piecesTaken
+            )
+         }
          Spacer()
       })
       .background(SwiftUI.Color.cyan)
-   }
-
-   @ViewBuilder
-   func squareView(position: Position) -> some View {
-      let background: SwiftUI.Color = {
-         if viewModel.selected == position {
-            return SwiftUI.Color.green
-         } else {
-            let white = (position.x + position.y) % 2 == 0
-            return white ? SwiftUI.Color.yellow : SwiftUI.Color.brown
-         }
-      }()
-      ZStack(alignment: .center) {
-         background
-         pieceView(position: position)
-      }.onTapGesture(count: 1) { [weak viewModel] in
-         viewModel?.select(position: position)
-      }
-   }
-
-   @ViewBuilder
-   func pieceView(position: Position) -> some View {
-      if let piece = viewModel.game.board.piece(at: position) {
-         VStack(alignment: .center, spacing: 0) {
-            Spacer()
-            SwiftUI.Image(piece.type.rawValue)
-               .resizable()
-               .foregroundColor(piece.color == .white ? .white : .black)
-               .scaledToFit()
-            Spacer()
-         }
-      } else {
-         Spacer()
-      }
    }
 }
 
