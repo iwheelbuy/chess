@@ -10,8 +10,7 @@ import SwiftUI
 struct ContentView: View {
 
    @ObservedObject private var viewModel = ContentViewModel()
-   @Namespace private var current
-   @Namespace private var taken
+   @Namespace private var namespace
 
    init() {
    }
@@ -21,15 +20,14 @@ struct ContentView: View {
          Spacer()
          ZStack(alignment: .center) {
             BoardView(selected: viewModel.selected) { [weak viewModel] position in
-               withAnimation(SwiftUI.Animation.linear(duration: 2)) {
+               withAnimation(SwiftUI.Animation.linear(duration: 1)) {
                   viewModel?.select(position: position)
                }
             }
             PiecesView(
-               current: current,
-               taken: taken,
+               namespace: namespace,
                pieces: viewModel.pieces,
-               piecesTaken: viewModel.piecesTaken
+               taken: viewModel.taken
             )
          }
          Spacer()

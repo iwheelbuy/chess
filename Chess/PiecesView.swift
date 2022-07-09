@@ -9,34 +9,64 @@ import SwiftUI
 
 struct PiecesView: View {
 
-   let current: Namespace.ID?
-   let taken: Namespace.ID?
+   let namespace: Namespace.ID?
    var pieces: [Position: Piece]
-   var piecesTaken: [Position: Piece] = [:]
+   var taken: [Position: Piece] = [:]
 
    var body: some View {
-      HStack(alignment: .center, spacing: 0, content: {
-         ForEach(0 ... 7, id: \.self, content: { x in
-            VStack(alignment: .center, spacing: 0, content: {
-               ForEach(0 ... 7, id: \.self, content: { y in
-                  let position = Position(x: x, y: y)
-                  if let piece = pieces[position] {
-                     PieceView(namespace: current, piece: piece)
-                        .zIndex(1)
-                        .transition(.scale(scale: 1))
-                  } else if let piece = piecesTaken[position] {
-                     PieceView(namespace: taken, piece: piece)
-                        .opacity(0.5)
-                        .zIndex(0)
-                        .transition(.scale(scale: 2))
-                  } else {
-                     SwiftUI.Color.clear
-                  }
+      ZStack(alignment: .center, content: {
+         HStack(alignment: .center, spacing: 0, content: {
+            ForEach(0 ... 7, id: \.self, content: { x in
+               VStack(alignment: .center, spacing: 0, content: {
+                  ForEach(0 ... 7, id: \.self, content: { y in
+                     let position = Position(x: x, y: y)
+                     if let piece = taken[position] {
+                        PieceView(namespace: namespace, piece: piece)
+                           .opacity(0.5)
+//                           .transition(.plain)
+                     } else {
+                        SwiftUI.Color.clear
+//                           .transition(.plain)
+                     }
+                  })
+               })
+            })
+         })
+         HStack(alignment: .center, spacing: 0, content: {
+            ForEach(0 ... 7, id: \.self, content: { x in
+               VStack(alignment: .center, spacing: 0, content: {
+                  ForEach(0 ... 7, id: \.self, content: { y in
+                     let position = Position(x: x, y: y)
+                     if let piece = pieces[position] {
+                        PieceView(namespace: namespace, piece: piece)
+//                           .transition(.plain)
+                     } else {
+                        SwiftUI.Color.clear
+//                           .transition(.plain)
+                     }
+                  })
                })
             })
          })
       })
       .aspectRatio(1, contentMode: .fit)
+   }
+}
+
+extension AnyTransition {
+
+   static var plain: AnyTransition {
+      AnyTransition.modifier(
+         active: PlainTransitionModifier(),
+         identity: PlainTransitionModifier()
+      )
+   }
+}
+
+struct PlainTransitionModifier: ViewModifier {
+
+   func body(content: Content) -> some View {
+      content
    }
 }
 
@@ -46,8 +76,7 @@ struct PiecesView_Previews: PreviewProvider {
       ZStack {
          SwiftUI.Color.cyan
          PiecesView(
-            current: nil,
-            taken: nil,
+            namespace: nil,
             pieces: [
                .init(x: 2, y: 3): .init(color: .white, type: .rook),
                .init(x: 4, y: 6): .init(color: .black, type: .bishop)

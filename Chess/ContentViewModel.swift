@@ -14,7 +14,7 @@ final class ContentViewModel: ObservableObject {
    @Published
    private(set) var pieces: [Position: Piece] = [:]
    @Published
-   private(set) var piecesTaken: [Position: Piece] = [:]
+   private(set) var taken: [Position: Piece] = [:]
    @Published
    var selected: Position?
 
@@ -35,15 +35,15 @@ final class ContentViewModel: ObservableObject {
          if game.canMove(from: selected, to: position) {
             game.move(from: selected, to: position)
             pieces = getPieces()
-            print("~~|", piecesTaken)
-            piecesTaken = piecesPrevious
+            print("~~|", taken)
+            taken = piecesPrevious
                .filter({ _, piece in
                   pieces.contains(where: { $0.value.id == piece.id }) == false
                })
-               .reduce(into: piecesTaken, { pieces, object in
+               .reduce(into: taken, { pieces, object in
                   pieces[object.key] = object.value
                })
-            print("~~|", piecesTaken)
+            print("~~|", taken)
          }
          self.selected = nil
       } else if game.board.piece(at: position) != nil {
