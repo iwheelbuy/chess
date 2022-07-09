@@ -20,14 +20,14 @@ struct ContentView: View {
          Spacer()
          ZStack(alignment: .center) {
             BoardView(selected: viewModel.selected) { [weak viewModel] position in
-               withAnimation(SwiftUI.Animation.linear(duration: 1)) {
+//               withAnimation(SwiftUI.Animation.linear(duration: 0.5)) {
+               withAnimation {
                   viewModel?.select(position: position)
                }
             }
             PiecesView(
                namespace: namespace,
-               pieces: viewModel.pieces,
-               taken: viewModel.taken
+               pieces: viewModel.pieces
             )
          }
          Spacer()

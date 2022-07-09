@@ -397,7 +397,7 @@ enum Color: String {
    }
 }
 
-struct Piece: Equatable, ExpressibleByStringLiteral, Identifiable {
+struct Piece: Equatable, ExpressibleByStringLiteral, Identifiable, Hashable {
 
    let color: Color
    let id: UUID
@@ -407,6 +407,10 @@ struct Piece: Equatable, ExpressibleByStringLiteral, Identifiable {
       self.color = color
       self.id = id
       self.type = type
+   }
+
+   func hash(into hasher: inout Hasher) {
+      hasher.combine(id)
    }
 
    init(stringLiteral: String) {
