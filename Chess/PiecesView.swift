@@ -7,54 +7,42 @@
 
 import SwiftUI
 
-struct Object: Hashable {
-
-   let piece: Piece
-   let position: Position
-}
-
 struct PiecesView: View {
 
-   let namespace: Namespace.ID?
+   let namespace: Namespace.ID
    var pieces: [Position: Piece]
 
-   var body: some View {
-      GeometryReader { metrics in
-         ForEach(objects(), id: \.self, content: { boardObject in
-            PieceView(namespace: namespace, piece: boardObject.piece)
-               .position(position(metrics: metrics, position: boardObject.position))
-               .frame(width: side(metrics: metrics), height: side(metrics: metrics))
-         })
-      }
-   }
-
-   private func objects() -> [Object] {
+   private var objects: [Object] {
       return pieces
          .map({ (position, piece) in
             Object(piece: piece, position: position)
          })
    }
 
-   private func side(metrics: GeometryProxy) -> CGFloat {
-      return min(metrics.size.width, metrics.size.height) / 8
-   }
-
-   private func position(metrics: GeometryProxy, position: Position) -> CGPoint {
-      let centerX = metrics.size.width / 2
-      let centerY = metrics.size.height / 2
-      let x = (CGFloat(position.x - 4) + 0.5) * side(metrics: metrics) + centerX
-      let y = (CGFloat(position.y - 4) + 0.5) * side(metrics: metrics) + centerY
-      return CGPoint(x: x, y: y)
+   var body: some View {
+      GeometryReader { geometry in
+         ForEach(objects, id: \.self, content: { object in
+            let side = min(geometry.size.width, geometry.size.height) / 8
+            let centerX = geometry.size.width / 2
+            let centerY = geometry.size.height / 2
+            let x = (CGFloat(object.position.x - 4) + 0.5) * side + centerX
+            let y = (CGFloat(object.position.y - 4) + 0.5) * side + centerY
+            let position = CGPoint(x: x, y: y)
+            PieceView(namespace: namespace, piece: object.piece)
+               .position(position)
+               .frame(width: side, height: side)
+         })
+      }
+      .allowsHitTesting(false)
    }
 }
 
-extension AnyTransition {
+extension PiecesView {
 
-   static var plain: AnyTransition {
-      AnyTransition.modifier(
-         active: PlainTransitionModifier(),
-         identity: PlainTransitionModifier()
-      )
+   private struct Object: Hashable {
+
+      let piece: Piece
+      let position: Position
    }
 }
 
@@ -67,11 +55,14 @@ struct PlainTransitionModifier: ViewModifier {
 
 struct PiecesView_Previews: PreviewProvider {
 
+   @Namespace
+   static var namespace
+
    static var previews: some View {
       ZStack {
          SwiftUI.Color.cyan
          PiecesView(
-            namespace: nil,
+            namespace: namespace,
             pieces: [
                .init(x: 0, y: 0): .init(color: .black, type: .rook),
                .init(x: 2, y: 5): .init(color: .white, type: .knight),
