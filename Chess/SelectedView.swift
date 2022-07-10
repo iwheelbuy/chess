@@ -8,22 +8,18 @@
 import SwiftUI
 
 struct SelectedView: View {
-
-   let color: UIColor = .green
-   var selected: Set<Position>
-
+   
+   let selected: (Position) -> UIColor?
+   
    var body: some View {
       HStack(alignment: .center, spacing: 0, content: {
          ForEach(0 ... 7, id: \.self, content: { x in
             VStack(alignment: .center, spacing: 0, content: {
                ForEach(0 ... 7, id: \.self, content: { y in
                   let position = Position(x: x, y: y)
-                  if selected.contains(position) {
-                     SwiftUI.Color(color)
-                        .border(.black, width: 1)
-                  } else {
-                     SwiftUI.Color.clear
-                  }
+                  let color = selected(position) ?? .clear
+                  SwiftUI.Color(color)
+                     .border(.black, width: 1 / UIScreen.main.scale)
                })
             })
          })
@@ -34,21 +30,22 @@ struct SelectedView: View {
 }
 
 struct SelectedView_Previews: PreviewProvider {
-
+   
    @Namespace
    static var namespace
-
+   
    static var previews: some View {
       ZStack {
          SwiftUI.Color.cyan
-         SelectedView(
-            selected: Set(
-               [
-                  Position.init(x: 0, y: 0),
-                  Position.init(x: 2, y: 7)
-               ]
-            )
-         )
+         SelectedView(selected: { position in
+            if position == .init(x: 0, y: 0) {
+               return .yellow
+            }
+            if position == .init(x: 2, y: 7) {
+               return .brown
+            }
+            return nil
+         })
          .background(.orange)
          .frame(width: 175, height: 225)
       }

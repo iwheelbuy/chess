@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct PieceView: View {
-
+   
    let namespace: Namespace.ID
    let piece: Piece
-
+   
    var body: some View {
       GeometryReader { geometry in
          let side = min(geometry.size.width, geometry.size.height) * 0.8
@@ -27,10 +27,10 @@ struct PieceView: View {
 }
 
 struct PieceView_Previews: PreviewProvider {
-
+   
    @Namespace
    static var namespace
-
+   
    static var previews: some View {
       PieceView(namespace: namespace, piece: .init(color: .black, type: .rook))
          .background(.cyan)

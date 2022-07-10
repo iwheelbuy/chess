@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct PiecesView: View {
-
-   let namespace: Namespace.ID
+   
+   @Namespace
+   private var namespace
    var pieces: [Position: Piece]
-
+   
    private var objects: [Object] {
       return pieces
          .map({ (position, piece) in
             Object(piece: piece, position: position)
          })
    }
-
+   
    var body: some View {
       GeometryReader { geometry in
          ForEach(objects, id: \.self, content: { object in
@@ -39,31 +40,27 @@ struct PiecesView: View {
 }
 
 extension PiecesView {
-
+   
    private struct Object: Hashable {
-
+      
       let piece: Piece
       let position: Position
    }
 }
 
 struct PlainTransitionModifier: ViewModifier {
-
+   
    func body(content: Content) -> some View {
       content
    }
 }
 
 struct PiecesView_Previews: PreviewProvider {
-
-   @Namespace
-   static var namespace
-
+   
    static var previews: some View {
       ZStack {
          SwiftUI.Color.cyan
          PiecesView(
-            namespace: namespace,
             pieces: [
                .init(x: 0, y: 0): .init(color: .black, type: .rook),
                .init(x: 2, y: 5): .init(color: .white, type: .knight),

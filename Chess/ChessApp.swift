@@ -9,10 +9,10 @@ import SwiftUI
 
 @main
 struct ChessApp: App {
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+   
+   var body: some Scene {
+      WindowGroup {
+         GameView()
+      }
+   }
 }

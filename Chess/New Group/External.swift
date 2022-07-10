@@ -29,7 +29,7 @@ extension Game {
          board.piece(at: $0.to)?.color.other
       } ?? .white
    }
-
+   
    var state: GameState {
       let color = turn
       let canMove = allMoves(for: color).contains(where: { move in
@@ -42,22 +42,22 @@ extension Game {
       }
       return canMove ? .idle : .staleMate
    }
-
+   
    init() {
       board = .standart
       history = []
    }
-
+   
    // MARK: Game logic
-
+   
    func canSelectPiece(at position: Position) -> Bool {
       return board.piece(at: position)?.color == turn
    }
-
+   
    func canMove(from: Position, by: Delta) -> Bool {
       return canMove(from: from, to: from + by)
    }
-
+   
    func canMove(from: Position, to: Position) -> Bool {
       guard let this = board.piece(at: from) else {
          return false
@@ -120,11 +120,11 @@ extension Game {
          ].contains(delta)
       }
    }
-
+   
    func pieceIsThreatened(at position: Position) -> Bool {
       return board.allPositions.contains(where: { canMove(from: $0, to: position) })
    }
-
+   
    func positionIsThreatened(_ position: Position, by color: Color) -> Bool {
       return board.allPieces.contains(where: { from, piece in
          guard piece.color == color else {
@@ -138,7 +138,7 @@ extension Game {
          return result
       })
    }
-
+   
    func kingIsInCheck(for color: Color) -> Bool {
       if let position = board.firstPosition(where: {
          $0.type == .king && $0.color == color
@@ -147,7 +147,7 @@ extension Game {
       }
       return false
    }
-
+   
    mutating func move(from: Position, to: Position) {
       assert(canMove(from: from, to: to))
       switch board.piece(at: from)?.type {
@@ -164,7 +164,7 @@ extension Game {
       board.movePiece(from: from, to: to)
       history.append(Move(from: from, to: to))
    }
-
+   
    func canPromotePiece(at position: Position) -> Bool {
       if let pawn = board.piece(at: position), pawn.type == .pawn,
          (pawn.color == .white && position.y == 0) ||
@@ -173,18 +173,18 @@ extension Game {
       }
       return false
    }
-
+   
    mutating func promotePiece(at position: Position, to type: PieceType) {
       assert(canPromotePiece(at: position))
       board.promotePiece(at: position, to: type)
    }
-
+   
    func movesForPiece(at position: Position) -> [Position] {
       return board.allPositions.filter { canMove(from: position, to: $0) }
    }
-
+   
    // MARK: AI
-
+   
    func nextMove(for color: Color) -> Move {
       var bestMove: Move?
       var bestState: GameState?
@@ -274,19 +274,19 @@ private extension Game {
          .compactMap { $1.color == color ? $0 : nil }
          .lazy.flatMap { self.allMoves(for: $0) }
    }
-
+   
    func allMoves(for position: Position) -> LazyFilterSequence<[Move]> {
       return board.allPositions
          .map { Move(from: position, to: $0) }
          .lazy.filter { self.canMove(from: $0.from, to: $0.to) }
    }
-
+   
    func allThreats(for color: Color) -> LazyFilterSequence<[(position: Position, piece: Piece)]> {
       return board.allPieces.lazy.filter { position, piece in
          return piece.color == color && self.pieceIsThreatened(at: position)
       }
    }
-
+   
    func pawnCanTake(from: Position, with delta: Delta) -> Bool {
       guard abs(delta.x) == 1, let pawn = board.piece(at: from) else {
          return false
@@ -299,7 +299,7 @@ private extension Game {
          return delta.y == 1
       }
    }
-
+   
    func enPassantTakePermitted(from: Position, to: Position) -> Bool {
       guard let this = board.piece(at: from),
             pawnCanTake(from: from, with: to - from),
@@ -316,11 +316,11 @@ private extension Game {
          return lastMove.from.y == to.y - 1 && lastMove.to.y == to.y + 1
       }
    }
-
+   
    func pieceHasMoved(at position: Position) -> Bool {
       return history.contains(where: { $0.from == position })
    }
-
+   
    func castlingPermitted(from: Position, to: Position) -> Bool {
       guard let this = board.piece(at: from) else {
          return false
@@ -373,7 +373,7 @@ enum PieceType: String {
    case bishop
    case queen
    case king
-
+   
    var value: Int {
       switch self {
       case .pawn:
@@ -393,28 +393,28 @@ enum PieceType: String {
 enum Color: String {
    case white
    case black
-
+   
    var other: Color {
       return self == .black ? .white : .black
    }
 }
 
 struct Piece: Equatable, ExpressibleByStringLiteral, Identifiable, Hashable {
-
+   
    let color: Color
    let id: UUID
    var type: PieceType
-
+   
    init(color: Color, id: UUID = .init(), type: PieceType) {
       self.color = color
       self.id = id
       self.type = type
    }
-
+   
    func hash(into hasher: inout Hasher) {
       hasher.combine(id)
    }
-
+   
    init(stringLiteral: String) {
       let chars = Array(stringLiteral)
       precondition(chars.count == 3)
@@ -444,15 +444,15 @@ struct Delta: Hashable {
 
 struct Position: Hashable {
    var x, y: Int
-
+   
    static func - (lhs: Position, rhs: Position) -> Delta {
       return Delta(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
    }
-
+   
    static func + (lhs: Position, rhs: Delta) -> Position {
       return Position(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
    }
-
+   
    static func += (lhs: inout Position, rhs: Delta) {
       lhs.x += rhs.x
       lhs.y += rhs.y
