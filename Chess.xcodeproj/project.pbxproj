@@ -19,6 +19,8 @@
 		7AA3C5FB28721B72009C378F /* ChessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3C5FA28721B72009C378F /* ChessTests.swift */; };
 		7AA3C60528721B72009C378F /* ChessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3C60428721B72009C378F /* ChessUITests.swift */; };
 		7AA3C60728721B72009C378F /* ChessUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA3C60628721B72009C378F /* ChessUITestsLaunchTests.swift */; };
+		7AB46ADD287ABC15001942DD /* SelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB46ADC287ABC15001942DD /* SelectedView.swift */; };
+		7AB46ADF287AC5DC001942DD /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB46ADE287AC5DC001942DD /* Board.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		7AA3C60028721B72009C378F /* ChessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AA3C60428721B72009C378F /* ChessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessUITests.swift; sourceTree = "<group>"; };
 		7AA3C60628721B72009C378F /* ChessUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		7AB46ADC287ABC15001942DD /* SelectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedView.swift; sourceTree = "<group>"; };
+		7AB46ADE287AC5DC001942DD /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				7A8A6BFA2872FE6A00545055 /* External.swift */,
+				7AB46ADE287AC5DC001942DD /* Board.swift */,
 			);
 			path = "New Group";
 			sourceTree = "<group>";
@@ -116,8 +121,9 @@
 				7AA3C5E928721B70009C378F /* ChessApp.swift */,
 				7AA3C5EB28721B70009C378F /* ContentView.swift */,
 				7A79D05A2875F89A00E6C329 /* ContentViewModel.swift */,
-				7A9B90C52876AE98007D4A87 /* PieceView.swift */,
 				7A9B90CB2876B386007D4A87 /* PiecesView.swift */,
+				7A9B90C52876AE98007D4A87 /* PieceView.swift */,
+				7AB46ADC287ABC15001942DD /* SelectedView.swift */,
 				7AA3C5ED28721B72009C378F /* Assets.xcassets */,
 				7A8A6BF92872FE5D00545055 /* New Group */,
 				7AA3C5EF28721B72009C378F /* Preview Content */,
@@ -281,12 +287,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A9B90C62876AE98007D4A87 /* PieceView.swift in Sources */,
+				7AB46ADD287ABC15001942DD /* SelectedView.swift in Sources */,
 				7A79D05B2875F89A00E6C329 /* ContentViewModel.swift in Sources */,
 				7AA3C5EC28721B70009C378F /* ContentView.swift in Sources */,
 				7A9B90CA2876B244007D4A87 /* BoardView.swift in Sources */,
 				7AA3C5EA28721B70009C378F /* ChessApp.swift in Sources */,
 				7A8A6BFB2872FE6A00545055 /* External.swift in Sources */,
 				7A9B90CC2876B386007D4A87 /* PiecesView.swift in Sources */,
+				7AB46ADF287AC5DC001942DD /* Board.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,17 +19,24 @@ struct ContentView: View {
       VStack(alignment: .center, spacing: 0, content: {
          Spacer()
          ZStack(alignment: .center) {
-            BoardView(selected: viewModel.selected) { [weak viewModel] position in
-//               withAnimation(SwiftUI.Animation.linear(duration: 0.5)) {
+            BoardView(select: { [weak viewModel] position in
                withAnimation {
                   viewModel?.select(position: position)
                }
-            }
+            })
+            SelectedView(selected: viewModel.selected)
             PiecesView(
                namespace: namespace,
                pieces: viewModel.pieces
             )
          }
+         Spacer()
+
+         let buttonTitle = viewModel.incorrect == nil ? "Check" : "Clear"
+         Button(buttonTitle, action: { [weak viewModel] in
+            viewModel?.check()
+         })
+
          Spacer()
       })
       .background(SwiftUI.Color.cyan)

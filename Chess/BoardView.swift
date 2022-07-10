@@ -9,7 +9,6 @@ import SwiftUI
 
 struct BoardView: View {
 
-   var selected: Position?
    var select: (Position) -> Void
 
    var body: some View {
@@ -19,6 +18,9 @@ struct BoardView: View {
                ForEach(0 ... 7, id: \.self, content: { y in
                   let position = Position(x: x, y: y)
                   squareView(position: position)
+                     .onTapGesture(count: 1) {
+                        select(position)
+                     }
                })
             })
          })
@@ -28,18 +30,8 @@ struct BoardView: View {
 
    @ViewBuilder
    private func squareView(position: Position) -> some View {
-      let view: SwiftUI.Color = {
-         if selected == position {
-            return SwiftUI.Color.green
-         } else {
-            let white = (position.x + position.y) % 2 == 0
-            return white ? SwiftUI.Color.yellow : SwiftUI.Color.brown
-         }
-      }()
-      view
-         .onTapGesture(count: 1) {
-            select(position)
-         }
+      let white = (position.x + position.y) % 2 == 0
+      white ? SwiftUI.Color.yellow : SwiftUI.Color.brown
    }
 }
 
