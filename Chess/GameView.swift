@@ -60,7 +60,7 @@ struct GameView: View {
                   return nil
                }
             } else if viewModel.selected.contains(position) {
-               return .systemPurple
+               return .systemYellow
             } else {
                return nil
             }

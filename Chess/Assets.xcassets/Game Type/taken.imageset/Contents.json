@@ -1,0 +1,16 @@
+{
+  "images" : [
+    {
+      "filename" : "1904654_cancel_close_cross_delete_reject_icon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
+  }
+}

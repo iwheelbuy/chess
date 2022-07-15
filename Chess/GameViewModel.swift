@@ -14,6 +14,10 @@ final class GameViewModel: ObservableObject {
       let correct: Set<Position>
       let incorrect: Set<Position>
       let missed: Set<Position>
+
+      var isValid: Bool {
+         return !correct.isEmpty || !incorrect.isEmpty || !missed.isEmpty
+      }
    }
 
    private var game: Game!
@@ -33,23 +37,30 @@ final class GameViewModel: ObservableObject {
    
    func check() {
       if completed == nil {
-         let unprotected = game.board.allPositions
-            .filter({ position in
-               switch gameType {
-               case .alone:
-                  return isAlone(position: position)
-               case .protected:
-                  return isProtected(position: position)
-               }
-            })
+         let matching = Self.getMatching(game: game, gameType: gameType)
          completed = .init(
-            correct: selected.intersection(unprotected),
-            incorrect: selected.subtracting(unprotected),
-            missed: Set<Position>(unprotected).subtracting(selected)
+            correct: selected.intersection(matching),
+            incorrect: selected.subtracting(matching),
+            missed: matching.subtracting(selected)
          )
       } else {
          generate()
       }
+   }
+
+   static func getMatching(game: Game, gameType: GameType) -> Set<Position> {
+      let array = game.board.allPositions
+         .filter({ position in
+            switch gameType {
+            case .alone:
+               return isAlone(game: game, position: position)
+            case .protected:
+               return isProtected(game: game, position: position)
+            case .taken:
+               return isAlone(game: game, position: position) && isAtRisk(game: game, position: position)
+            }
+         })
+      return Set(array)
    }
 
    func update(gameType: GameType) {
@@ -115,13 +126,18 @@ final class GameViewModel: ObservableObject {
    }
 
    func generate() {
-      let pieces = getRandomPieces()
-      self.game = .init(
-         board: .init(pieces: pieces),
-         history: []
-      )
-      self.pieces = pieces
+      var game: Game!
+      var pieces: [Position: Piece]!
+      repeat {
+         pieces = getRandomPieces()
+         game = .init(
+            board: .init(pieces: pieces),
+            history: []
+         )
+      } while Self.getMatching(game: game, gameType: gameType).isEmpty
       self.completed = nil
+      self.game = game
+      self.pieces = pieces
       self.selected = Set()
    }
    
@@ -145,14 +161,14 @@ final class GameViewModel: ObservableObject {
          }
    }
    
-   func isAlone(position: Position) -> Bool {
-      guard let piece = game.board.piece(at: position) else {
+   static func isAlone(game gameOriginal: Game, position: Position) -> Bool {
+      guard let piece = gameOriginal.board.piece(at: position) else {
          return false
       }
       guard piece.type != .king else {
          return false
       }
-      var pieces = game.board.allPieces
+      var pieces = gameOriginal.board.allPieces
          .reduce(into: [Position: Piece](), { pieces, object in
             pieces[object.position] = object.piece
          })
@@ -165,14 +181,14 @@ final class GameViewModel: ObservableObject {
       return game.positionIsThreatened(position, by: piece.color.other) == false
    }
 
-   func isProtected(position: Position) -> Bool {
-      guard let piece = game.board.piece(at: position) else {
+   static func isProtected(game gameOriginal: Game, position: Position) -> Bool {
+      guard let piece = gameOriginal.board.piece(at: position) else {
          return false
       }
       guard piece.type != .king else {
          return false
       }
-      var pieces = game.board.allPieces
+      var pieces = gameOriginal.board.allPieces
          .reduce(into: [Position: Piece](), { pieces, object in
             pieces[object.position] = object.piece
          })
@@ -183,5 +199,15 @@ final class GameViewModel: ObservableObject {
          return false
       }
       return game.positionIsThreatened(position, by: piece.color.other) == true
+   }
+
+   static func isAtRisk(game gameOriginal: Game, position: Position) -> Bool {
+      guard let piece = gameOriginal.board.piece(at: position) else {
+         return false
+      }
+      guard piece.type != .king else {
+         return false
+      }
+      return gameOriginal.positionIsThreatened(position, by: piece.color.other) == true
    }
 }

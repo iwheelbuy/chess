@@ -9,8 +9,18 @@ import SwiftUI
 
 struct BoardView: View {
 
-   var black: UIColor = .systemBrown
-   var white: UIColor = .systemYellow
+   var black: UIColor = UIColor(
+      red: 128 / 255,
+      green: 23 / 255,
+      blue: 181 / 255,
+      alpha: 1
+   )
+   var white: UIColor = UIColor(
+      red: 205 / 255,
+      green: 31 / 255,
+      blue: 199 / 255,
+      alpha: 1
+   )
    var select: (Position) -> Void
    
    var body: some View {
