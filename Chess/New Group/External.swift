@@ -457,4 +457,8 @@ struct Position: Hashable {
       lhs.x += rhs.x
       lhs.y += rhs.y
    }
+
+   var color: Color {
+      return (x + y) % 2 == 0 ? .white : .black
+   }
 }

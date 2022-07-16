@@ -72,7 +72,7 @@ final class GameViewModel: ObservableObject {
       var original = Board.standart.allPieces
          .map({ $0.piece })
          .filter({ $0.type != .king })
-      let count = Int.random(in: 10 ..< 20)
+      let count = Int.random(in: 10 ..< 15)
       var array: [Piece] = []
       while array.count < count {
          let index = Int.random(in: 0 ..< original.count)
@@ -99,6 +99,12 @@ final class GameViewModel: ObservableObject {
             let position = Position(x: x, y: y)
             guard pieces[position] == nil else {
                continue
+            }
+            if
+               piece.type == .bishop,
+               pieces.contains(where: { $0.value.type == .bishop && $0.value.color == piece.color && $0.key.color == position.color })
+            {
+               continue // bishops can't be on squares of same color
             }
             pieces[position] = piece
             array.remove(at: 0)

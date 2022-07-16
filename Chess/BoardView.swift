@@ -43,8 +43,7 @@ struct BoardView: View {
    
    @ViewBuilder
    private func squareView(position: Position) -> some View {
-      let white = (position.x + position.y) % 2 == 0
-      SwiftUI.Color(white ? self.white : self.black)
+      SwiftUI.Color(position.color == .white ? white : black)
    }
 }
 
