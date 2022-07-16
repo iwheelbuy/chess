@@ -54,6 +54,8 @@ final class GameViewModel: ObservableObject {
             switch gameType {
             case .alone:
                return isAlone(game: game, position: position)
+            case .major:
+               return isMajor(game: game, position: position)
             case .protected:
                return isProtected(game: game, position: position)
             case .taken:
@@ -72,7 +74,7 @@ final class GameViewModel: ObservableObject {
       var original = Board.standart.allPieces
          .map({ $0.piece })
          .filter({ $0.type != .king })
-      let count = Int.random(in: 10 ..< 15)
+      let count = Int.random(in: gameType.range)
       var array: [Piece] = []
       while array.count < count {
          let index = Int.random(in: 0 ..< original.count)
@@ -215,5 +217,12 @@ final class GameViewModel: ObservableObject {
          return false
       }
       return gameOriginal.positionIsThreatened(position, by: piece.color.other) == true
+   }
+
+   static func isMajor(game gameOriginal: Game, position: Position) -> Bool {
+      guard let piece = gameOriginal.board.piece(at: position) else {
+         return false
+      }
+      return [PieceType.bishop, .knight, .queen, .rook].contains(piece.type)
    }
 }
